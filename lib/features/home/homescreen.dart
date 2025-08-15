@@ -28,7 +28,9 @@ class _HomeScreenState extends State<HomeScreen> {
   StreamSubscription? _gasesSub;
 
   List<double> gasavg = [1, 1, 1];
+  List<double>gasbias = [0,0,0];
   List<double> gaspercent = [0.0, 0.0, 0.0];
+  List<double> gasraw = [0.0,0.0,0.0];
   double emisssionpercent = 0.0;
   ValueNotifier<double> emissionlister = ValueNotifier(0.0);
   int avgpercent = 50;
@@ -49,17 +51,26 @@ class _HomeScreenState extends State<HomeScreen> {
         _loaded = true;
       });
     });
+    _db.child("bias").get().then((value) {
+      setState(() {
+        final temp = value.value as List<dynamic>;
+        print("temp: $temp");
+        for(int i = 0; i < temp.length; i++){
+          gasbias[i] = temp[i].toDouble();
+        }
+        _loaded = true;
+      });
+    });
 
     _gasesSub = _db.child("gases").child("ABXXCDXXXX").child("current").onValue.listen((event) {
       List<dynamic> temp = event.snapshot.value as List<dynamic>;
-      List<double> gasraw = [];
-      for(int i = 0; i < temp.length; i++){
-        gasraw.add(temp[i].toDouble());
-      }
-
-      debugPrint("gasraw: $gasraw");
       setState(() {
-        gaspercent = gasEconomy.getpercents(gasraw, gasavg);
+        List<double> gasraw = [];
+        for(int i = 0; i < temp.length; i++){
+          gasraw.add(temp[i].toDouble());
+        }
+
+        gaspercent = gasEconomy.getpercents(gasraw, gasavg, gasbias);
         emisssionpercent = gasEconomy.getemissionpercent(gaspercent);
         emissionlister.value = emisssionpercent*100;
         print("gaspercent: $gaspercent");
@@ -102,43 +113,56 @@ class _HomeScreenState extends State<HomeScreen> {
                     // height: 60,
                     height: 20,
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Hi, User",
-                        style: GoogleFonts.poppins(
-                            fontSize: 30, fontWeight: FontWeight.bold),
+                  Container(
+                    decoration: BoxDecoration(
+                  color: Colors.green[50],
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Hi, User",
+                            style: GoogleFonts.poppins(
+                                fontSize: 30, fontWeight: FontWeight.bold, color: Colors.black),
+                          ),
+                          Container(
+                            height: 50,
+                            width: 50,
+                            decoration:  BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.green[50]),
+                            clipBehavior: Clip.antiAlias,
+                            child: const Padding(
+                              padding: EdgeInsets.all(2.0),
+                            ),
+                          )
+                        ],
                       ),
-                      Container(
-                        height: 50,
-                        width: 50,
-                        decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                Colors.teal,
-                                Colors.purple,
-                              ],
-                            )),
-                        clipBehavior: Clip.antiAlias,
-                        child: const Padding(
-                          padding: EdgeInsets.all(2.0),
-                        ),
-                      )
-                    ],
-                  ),
-                  Text(
-                    "Great start of the day, a little more",
-                    style: GoogleFonts.poppins(
-                        fontSize: 16, fontWeight: FontWeight.w300),
-                  ),
-                  Text(
-                    "to reach today's goals",
-                    style: GoogleFonts.poppins(
-                        fontSize: 16, fontWeight: FontWeight.w300),
+                      Text(
+                        "You have saved ₹750 this Month",
+                        style: GoogleFonts.poppins(
+                            fontSize: 20, fontWeight: FontWeight.w300),
+                      ),
+                      SizedBox(height: 20,),
+                      Text(
+                        "Great start of the day, a little more",
+                        style: GoogleFonts.poppins(
+                            fontSize: 16, fontWeight: FontWeight.w300),
+                      ),
+                      Text(
+                        "to reach today's goals",
+                        style: GoogleFonts.poppins(
+                            fontSize: 16, fontWeight: FontWeight.w300),
+                      ),
+                        ],
+                      ),
+                    ),
                   ),
                   const SizedBox(
                     height: 20,
@@ -149,13 +173,14 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: SimpleCircularProgressBar(
                               size: 140,
                               mergeMode: true,
-                              valueNotifier: emissionlister,
+                              // valueNotifier: emissionlister,
                               progressColors: (emisssionpercent>0.75)?[Colors.red,Colors.red]:((emisssionpercent > 0.6)?[Colors.yellow,Colors.yellow]:[Colors.green,Colors.green]),
+                              maxValue: 0,
                               
                               onGetText: (double value){
                                 // print("test3 ${_emissionPerCent}");
                                 // print("test4 ${value}");
-                                return Text("${(value).toInt()}%",style: TextStyle(fontSize: 24),);
+                                return Text("${(emisssionpercent*100).toInt()}%",style: TextStyle(fontSize: 24),);
                               },
                             ),
                           
@@ -285,8 +310,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         delay: 2,
                         child: Custom(
                             icon: CupertinoIcons.cloud,
-                            iconname: "CO",
-                            value: "50",
+                            iconname: "CO2",
+                            value: gasraw[0].toString(),
                             percentage: gaspercent[0]*100,
                             percentIndigator: gaspercent[0],
                             color: firstcard,
@@ -296,8 +321,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         delay: 2,
                         child: Custom(
                           icon: CupertinoIcons.clock,
-                          iconname: "CO2",
-                          value: "50",
+                          iconname: "CO",
+                          value: gasraw[1].toString(),
                           percentage: gaspercent[1]*100,
                           percentIndigator: gaspercent[1],
                           color: secondcard,
@@ -317,7 +342,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: Custom(
                             icon: CupertinoIcons.captions_bubble,
                             iconname: "TOL",
-                            value: "50",
+                            value: gasraw[2].toString(),
                             percentage:gaspercent[2]*100,
                             percentIndigator: gaspercent[2],
                             color: thirdcard,

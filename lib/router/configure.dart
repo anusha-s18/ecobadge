@@ -1,4 +1,5 @@
 
+import 'package:ecobadge/features/diagnostics/diagnostics_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ecobadge/features/home/homescreen.dart';
@@ -27,6 +28,8 @@ final router = GoRouter(
           index =1;
         } else if(state.fullPath == Routes.profile.path){
           index =2;
+        } else if(state.fullPath == Routes.diagnostics.path) {
+          index = 3;
         }
         debugPrint("Index:$index");
 
@@ -54,6 +57,11 @@ final router = GoRouter(
           path: Routes.profile.path,
           name: Routes.profile.name,
           pageBuilder:(context, state) => const CupertinoPage(child: Profile()),
+        ),
+        GoRoute(
+          path: Routes.diagnostics.path,
+          name: Routes.diagnostics.name,
+          pageBuilder:(context, state) => const CupertinoPage(child: DiagnosticsScreen()),
         ),
         // GoRoute(
         //   path: Routes.login.path,

@@ -1,10 +1,13 @@
 
 class GasEconomy{
 
-  List<double> getpercents(List<double> gasraw, List<double> gasavg){
+  List<double> getpercents(List<double> gasraw, List<double> gasavg, List<double> gasbias){
     List<double> percents = [];
+    print("gasraw:$gasraw");
+    print("gasbias:$gasbias");
+    print("gasavg:$gasavg");
     for(int i = 0; i < gasraw.length; i++){
-      double percent = ((gasraw[i] - gasavg[i]).toDouble() / gasavg[i].toDouble() + 0.5);
+      double percent = (((gasraw[i] - gasavg[i])*gasbias[i]) / gasavg[i] + 0.5);
       if(percent < 0){
         percent = 0;
       }

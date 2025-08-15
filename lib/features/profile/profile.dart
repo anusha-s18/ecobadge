@@ -11,6 +11,7 @@ class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
       return Scaffold(
+        backgroundColor: Colors.black,
         appBar: AppBar(
         title: Text("Profile",
         style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500),),
@@ -22,13 +23,7 @@ class _ProfileState extends State<Profile> {
           decoration: BoxDecoration(
             border: Border.all(color: Colors.white),
             borderRadius: BorderRadius.circular(10),
-            gradient: const LinearGradient(
-              colors: [Colors.purple, Colors.blueAccent],
-              begin: Alignment.bottomLeft,
-              end: Alignment.topRight,
-              stops: [0.4, 0.7],
-              tileMode: TileMode.repeated,
-            ),
+            
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -56,11 +51,11 @@ class _ProfileState extends State<Profile> {
                     // height: 40,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
-                      color: Colors.grey[350],
+                      color: Colors.green[700],
                     ),
                     child: Center(
                         child: Text(
-                      'Change Details',
+                      'Change Details', 
                       style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                       textAlign: TextAlign.center,
                     )),

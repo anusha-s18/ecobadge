@@ -42,7 +42,7 @@ class NavDisp extends StatelessWidget {
                       selectedIndex==0? Iconsax.home5:Iconsax.home_1,
                       selectedIndex==1? Iconsax.wallet:Iconsax.wallet4,
                       selectedIndex==2? Iconsax.profile_circle5:Iconsax.profile_2user4,                     
-                      
+                      selectedIndex==3? Iconsax.setting:Iconsax.setting, 
                     ], 
                     currentIndex: selectedIndex, 
                     onItemTap: (index) => context.go(_indexToTab(index)), 
@@ -66,6 +66,8 @@ class NavDisp extends StatelessWidget {
         return Routes.redeem.path;
       case 2:
         return Routes.profile.path;
+      case 3:
+        return Routes.diagnostics.path;
       default:
         return Routes.homescreen.path;
     }

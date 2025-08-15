@@ -12,6 +12,7 @@ class Routes{
   static AppRouter homescreen = AppRouter(name: "/home", path: "/homescreen");
   static AppRouter redeem = AppRouter(name: "/redeem", path: "/redeem");
   static AppRouter profile= AppRouter(name: "/profile", path: "/profile"); 
+  static AppRouter diagnostics = AppRouter(name: "/diagnostics", path: "/diagnostics");
   // static AppRouter login= AppRouter(name: "/login", path: "/login"); 
   // static AppRouter register= AppRouter(name: "/register", path: "/register"); 
 
